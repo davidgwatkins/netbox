@@ -707,8 +707,11 @@ class Interface(ModularComponentModel, BaseInterface, CabledObjectModel, PathEnd
 
         # A physical interface cannot have a parent interface, unless the parent is a breakout
         if self.type != InterfaceTypeChoices.TYPE_VIRTUAL and self.parent is not None:
-            if self.parent != InterfaceTypeChoices.TYPE_BREAKOUT:
-                raise ValidationError({'parent': "Only virtual interfaces may be assigned to a parent interface."})
+            if self.parent.breakout is False:
+                raise ValidationError({
+                    'parent': f"Only virtual interfaces may be assigned to a parent interface, unless "
+                              f"the parent interface is configured to operate in breakout."
+                })                
 
         # An interface's parent must belong to the same device or virtual chassis
         if self.parent and self.parent.device != self.device:
@@ -722,6 +725,14 @@ class Interface(ModularComponentModel, BaseInterface, CabledObjectModel, PathEnd
                     'parent': f"The selected parent interface ({self.parent}) belongs to {self.parent.device}, which "
                               f"is not part of virtual chassis {self.device.virtual_chassis}."
                 })
+        
+        # Breakout Validation
+
+        # A child of a breakout interface may not have different rates from other children of the same parent
+
+        # A child of a breakout interface may not exceed the speed of the parent breakout interface
+
+        # The sum of the speeds of children of a parent breakout interface may not exceed the speeds  
 
         # Bridge validation
 
