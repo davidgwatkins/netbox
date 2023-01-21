@@ -548,6 +548,11 @@ class Interface(ModularComponentModel, BaseInterface, CabledObjectModel, PathEnd
         max_length=50,
         choices=InterfaceTypeChoices
     )
+    breakout = models.BooleanField(
+        default=False,
+        verbose_name='Breakout mode',
+        help_text=_('This interface is configured to operate in breakout')
+    )
     mgmt_only = models.BooleanField(
         default=False,
         verbose_name='Management only',
@@ -700,9 +705,10 @@ class Interface(ModularComponentModel, BaseInterface, CabledObjectModel, PathEnd
         if self.pk and self.parent_id == self.pk:
             raise ValidationError({'parent': "An interface cannot be its own parent."})
 
-        # A physical interface cannot have a parent interface
+        # A physical interface cannot have a parent interface, unless the parent is a breakout
         if self.type != InterfaceTypeChoices.TYPE_VIRTUAL and self.parent is not None:
-            raise ValidationError({'parent': "Only virtual interfaces may be assigned to a parent interface."})
+            if self.parent != InterfaceTypeChoices.TYPE_BREAKOUT:
+                raise ValidationError({'parent': "Only virtual interfaces may be assigned to a parent interface."})
 
         # An interface's parent must belong to the same device or virtual chassis
         if self.parent and self.parent.device != self.device:
