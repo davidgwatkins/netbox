@@ -728,11 +728,21 @@ class Interface(ModularComponentModel, BaseInterface, CabledObjectModel, PathEnd
         
         # Breakout Validation
 
+        # A breakout interface only supports physical children
+        if self.parent.breakout and self.type == InterfaceTypeChoices.TYPE_VIRTUAL:
+            raise ValidationError({'parent': f"Only physical interfaces may be assigned to a breakout parent interface."})
+    
         # A child of a breakout interface may not have different rates from other children of the same parent
-
-        # A child of a breakout interface may not exceed the speed of the parent breakout interface
-
-        # The sum of the speeds of children of a parent breakout interface may not exceed the speeds  
+        if self.parent.breakout and self.speed is not None:
+            sibling_speeds = [interface.speed for interface in Interface.objects.filter(parent__id = self.parent_id)]
+            if len(sibling_speeds) > 0:
+                if self.speed not in sibling_speeds:
+                    raise ValidationError({'parent': f"All children of a breakout interface must have the same speed."})
+        # Children of a breakout interface may not exceed the speed of the parent interface
+                if sum(sibling_speeds + self.speed) > self.parent.speed:
+                    raise ValidationError({
+                        'parent': f"Children of a breakout interface may not exceed the speed of the parent interface."
+                    })
 
         # Bridge validation
 
