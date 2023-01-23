@@ -1356,6 +1356,9 @@ class InterfaceFilterSet(
         queryset=Interface.objects.all(),
         label=_('LAG interface (ID)'),
     )
+    breakout = django_filters.BooleanFilter(
+        label=_('Breakout Interface')
+    )
     speed = MultiValueNumberFilter()
     duplex = django_filters.MultipleChoiceFilter(
         choices=InterfaceDuplexChoices

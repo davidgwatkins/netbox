@@ -1160,9 +1160,9 @@ class PowerOutletBulkEditForm(
 
 class InterfaceBulkEditForm(
     form_from_model(Interface, [
-        'label', 'type', 'parent', 'bridge', 'lag', 'speed', 'duplex', 'mac_address', 'wwn', 'mtu', 'mgmt_only',
-        'mark_connected', 'description', 'mode', 'rf_role', 'rf_channel', 'rf_channel_frequency', 'rf_channel_width',
-        'tx_power',
+        'label', 'type', 'parent', 'bridge', 'lag', 'breakout', 'speed', 'duplex', 'mac_address', 'wwn', 'mtu',
+        'mgmt_only', 'mark_connected', 'description', 'mode', 'rf_role', 'rf_channel', 'rf_channel_frequency',
+        'rf_channel_width', 'tx_power',
     ]),
     ComponentBulkEditForm
 ):
